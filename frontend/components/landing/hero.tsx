@@ -35,7 +35,7 @@ export function Hero() {
         <div ref={heroRef} className="grid lg:grid-cols-2 gap-12 xl:gap-20 items-start">
 
           {/* Left: Copy */}
-          <div className="hero-content order-2 lg:order-1">
+          <div className="hero-content">
             {/* Eyebrow */}
             <div className="hero-eyebrow opacity-0 translate-y-4 transition-all duration-500 ease-out mb-8">
               <span style={{ color: "var(--land-forest)" }} className="text-xs font-semibold tracking-[0.2em] uppercase">
@@ -91,7 +91,7 @@ export function Hero() {
           </div>
 
           {/* Right: Visual */}
-          <div className="hero-visual opacity-0 translate-y-8 transition-all duration-1000 ease-out delay-700 order-1 lg:order-2">
+          <div className="hero-visual opacity-0 translate-y-8 transition-all duration-1000 ease-out delay-700">
             {/* Image — in normal flow, wrapper clips with border-radius */}
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -151,14 +151,15 @@ export default function Home() {
     "What are the main conclusions drawn?"
   ];
 
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full gap-6">
-      <div>
+  const sidebarContentNode = (
+    <div className="flex flex-col overflow-y-auto custom-scrollbar h-full">
+      {/* pt-14 gives clearance below the absolute-positioned close button (top-3 + icon-sm h-7 ≈ 40px) */}
+      <div className="px-5 pt-14 pb-5">
         <h2 className="text-lg font-semibold mb-4">Documents</h2>
         {documents.length === 0 ? (
           <div className="text-sm text-muted-foreground space-y-4">
             <p>Citeline allows you to chat with your PDFs securely. Upload a document to get started.</p>
-            <Button variant="outline" className="w-full" onClick={loadSamplePdf}>
+            <Button variant="outline" size="sm" className="w-full" onClick={loadSamplePdf}>
               Try with a sample PDF
             </Button>
           </div>
@@ -173,7 +174,7 @@ export default function Home() {
         )}
       </div>
 
-      <div className="mt-auto pt-6 border-t border-border">
+      <div className="border-t border-border px-5 py-4 mt-auto" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom, 1rem))" }}>
         {documents.length >= MAX_DOCS ? (
           <div className="text-sm text-muted-foreground text-center mb-2">
             Maximum of {MAX_DOCS} documents reached. Please delete one to upload more.
@@ -196,9 +197,7 @@ export default function Home() {
               <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px]">
-              <div className="py-6 h-full">
-                <SidebarContent />
-              </div>
+              {sidebarContentNode}
             </SheetContent>
           </Sheet>
           <h1 className="text-xl font-bold tracking-tight">Citeline</h1>
@@ -220,8 +219,8 @@ export default function Home() {
       )}
 
       <div className="flex flex-1 overflow-hidden">
-        <aside className="hidden md:block w-80 border-r border-border p-6 overflow-y-auto">
-          <SidebarContent />
+        <aside className="hidden md:block w-80 border-r border-border overflow-y-auto">
+          {sidebarContentNode}
         </aside>
 
         <main className="flex-1 flex flex-col min-w-0 min-h-0 p-6 relative">

@@ -42,43 +42,39 @@ export function HowItWorks() {
         </div>
 
         <div ref={ref} className="relative">
-          {/* Vertical connector line (desktop) */}
-          <div
-            className="hidden md:block absolute left-[3.75rem] top-0 bottom-0 w-px"
-            style={{ backgroundColor: "var(--land-border)" }}
-          />
+          {/* Vertical connector line is now implemented per-step below for center alignment */}
 
           <div className="space-y-0">
             {steps.map((step, i) => (
               <div
                 key={step.number}
-                className="reveal-step opacity-0 translate-y-6 transition-all duration-700 ease-out relative md:pl-36 pb-16 last:pb-0"
+                className="reveal-step opacity-0 translate-y-6 transition-all duration-700 ease-out relative md:pl-36 pb-16 last:pb-0 flex flex-row md:block gap-6 md:gap-0"
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
                 {/* Number circle */}
-                <div className="md:absolute md:left-0 md:top-0 flex items-center gap-6 mb-4 md:mb-0">
+                <div className="md:absolute md:left-0 md:top-0 flex-shrink-0">
                   <div
-                    className="w-[3.75rem] h-[3.75rem] rounded-full border flex items-center justify-center flex-shrink-0 relative z-10"
+                    className="w-[3.75rem] h-[3.75rem] rounded-full border flex items-center justify-center relative z-10"
                     style={{ borderColor: "var(--land-border)", backgroundColor: "var(--land-bg)" }}
                   >
                     <span style={{ color: "var(--land-forest)" }} className="text-xs font-bold tracking-widest">{step.number}</span>
                   </div>
-                  <div className="md:hidden">
-                    <h3 style={{ color: "var(--land-ink)" }} className="text-2xl font-bold">{step.title}</h3>
-                  </div>
                 </div>
 
-                <div className="hidden md:block mb-2">
-                  <h3 style={{ color: "var(--land-ink)" }} className="text-2xl font-bold">{step.title}</h3>
+                {/* Content */}
+                <div className="flex-1 min-w-0 mt-1 md:mt-0">
+                  <h3 style={{ color: "var(--land-ink)" }} className="text-2xl font-bold mb-2">{step.title}</h3>
+                  <p style={{ color: "var(--land-ink-muted)" }} className="leading-relaxed max-w-md">{step.body}</p>
                 </div>
-                <p style={{ color: "var(--land-ink-muted)" }} className="leading-relaxed max-w-md">{step.body}</p>
 
-                {/* Mobile connector */}
+                {/* Connector line (desktop & mobile) */}
                 {i < steps.length - 1 && (
-                  <div
-                    className="md:hidden absolute left-[1.875rem] top-[3.75rem] w-px h-16"
-                    style={{ backgroundColor: "var(--land-border)" }}
-                  />
+                  <div className="absolute left-0 top-[1.875rem] bottom-[-1.875rem] w-[3.75rem] pointer-events-none z-0">
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px"
+                      style={{ backgroundColor: "var(--land-border)" }}
+                    />
+                  </div>
                 )}
               </div>
             ))}

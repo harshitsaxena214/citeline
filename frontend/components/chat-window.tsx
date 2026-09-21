@@ -20,7 +20,7 @@ export function ChatWindow({ messages, isPending }: ChatWindowProps) {
   }, [messages, isPending]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto pr-4" ref={scrollRef}>
+    <div className="flex-1 min-h-0 overflow-y-auto pr-4 custom-scrollbar" ref={scrollRef}>
       <div className="flex flex-col pb-4">
         {messages.length === 0 && !isPending && (
           <div className="flex flex-col items-center justify-center h-[50vh] text-center text-muted-foreground px-4">

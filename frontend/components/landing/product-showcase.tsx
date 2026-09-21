@@ -35,10 +35,10 @@ export function ProductShowcase() {
             <div className="w-16" />
           </div>
 
-          <div className="flex h-[480px]">
+          <div className="flex flex-col md:flex-row h-[400px] md:h-[480px]">
             {/* Sidebar */}
             <aside
-              className="w-64 flex-shrink-0 border-r p-4 flex flex-col"
+              className="hidden md:flex w-64 flex-shrink-0 border-r p-4 flex-col"
               style={{ backgroundColor: "var(--land-bg)", borderColor: "var(--land-border)" }}
             >
               <h3 style={{ color: "var(--land-ink-muted)", fontSize: "11px" }} className="font-semibold uppercase tracking-wider mb-3">
@@ -46,7 +46,7 @@ export function ProductShowcase() {
               </h3>
 
               {[
-                { name: "harshit_devops.pdf", pages: "4 pages", selected: true },
+                { name: "system_design_notes.pdf", pages: "4 pages", selected: true },
                 { name: "q3_report_2024.pdf", pages: "12 pages", selected: false },
               ].map((doc) => (
                 <div
@@ -90,34 +90,34 @@ export function ProductShowcase() {
 
             {/* Chat */}
             <main className="flex-1 flex flex-col min-w-0">
-              <div className="flex-1 overflow-hidden p-5 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4">
                 {/* User bubble */}
                 <div className="flex justify-end">
                   <div
-                    className="text-sm px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-xs"
+                    className="text-sm px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%] md:max-w-xs"
                     style={{ backgroundColor: "var(--land-ink)", color: "var(--land-bg)" }}
                   >
-                    What are the main technical skills listed?
+                    What architecture patterns are covered?
                   </div>
                 </div>
 
                 {/* Assistant bubble */}
                 <div className="flex justify-start">
-                  <div className="rounded-2xl rounded-tl-sm max-w-sm p-4" style={{ backgroundColor: "var(--land-bg)" }}>
+                  <div className="rounded-2xl rounded-tl-sm max-w-[95%] md:max-w-sm p-4" style={{ backgroundColor: "var(--land-bg)" }}>
                     <p style={{ color: "var(--land-ink)" }} className="text-sm leading-relaxed mb-3">
-                      The document lists the following technical skill areas:
+                      The document covers the following architecture patterns:
                     </p>
                     <ul className="text-sm space-y-1 mb-3">
-                      {["Cloud & IaC: AWS, Terraform, Ansible", "Containers & Orchestration: Docker, Kubernetes", "CI/CD & DevOps: GitHub Actions, Jenkins"].map((item) => (
+                      {["Scalability: Load balancing, horizontal scaling, caching layers", "Reliability: Circuit breakers, retries, graceful degradation", "Data: Database sharding, replication, eventual consistency"].map((item) => (
                         <li key={item} className="flex items-start gap-2">
-                          <span style={{ color: "var(--land-forest)" }} className="mt-0.5">—</span>
-                          <span style={{ color: "var(--land-ink-muted)" }}>{item}</span>
+                          <span style={{ color: "var(--land-forest)" }} className="mt-0.5 flex-shrink-0">—</span>
+                          <span style={{ color: "var(--land-ink-muted)" }} className="break-words">{item}</span>
                         </li>
                       ))}
                     </ul>
-                    <div className="flex items-center gap-2 pt-3 border-t" style={{ borderColor: "var(--land-border)" }}>
-                      <span style={{ backgroundColor: "var(--land-bg-stone)", color: "var(--land-ink-muted)", fontSize: "10px" }} className="px-2 py-0.5 rounded-full">Q&amp;A</span>
-                      <span style={{ color: "var(--land-forest)", fontSize: "10px" }} className="font-medium">harshit_devops.pdf, p. 1</span>
+                    <div className="flex items-center gap-2 pt-3 border-t flex-wrap" style={{ borderColor: "var(--land-border)" }}>
+                      <span style={{ backgroundColor: "var(--land-bg-stone)", color: "var(--land-ink-muted)", fontSize: "10px" }} className="px-2 py-0.5 rounded-full whitespace-nowrap">Q&amp;A</span>
+                      <span style={{ color: "var(--land-forest)", fontSize: "10px" }} className="font-medium break-all md:break-normal">system_design_notes.pdf, p. 1</span>
                     </div>
                   </div>
                 </div>

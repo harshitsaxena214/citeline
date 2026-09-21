@@ -57,8 +57,9 @@ export function UploadButton({ onUploadComplete, disabled }: UploadButtonProps) 
         disabled={disabled || isUploading}
         onClick={() => fileInputRef.current?.click()}
         className="w-full"
+        size="sm"
       >
-        <Upload className="mr-2 h-4 w-4" />
+        <Upload className="mr-2 h-3.5 w-3.5" />
         {isUploading ? "Uploading and indexing..." : "Upload Document"}
       </Button>
     </div>
