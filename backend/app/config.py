@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     database_url: str
     allowed_origins: str  # comma-separated
 
+    # --- Optional model override ---
+    # Use a smaller/faster model for routing. Falls back to gemini_model if unset.
+    gemini_fast_model: Optional[str] = None
+
     # --- Chroma ---
     chroma_api_key: Optional[str] = None
     chroma_tenant: Optional[str] = None
@@ -34,7 +38,7 @@ class Settings(BaseSettings):
     chunk_overlap: int = 150
     top_k: int = 5
     max_distance: float = 1.4
-    max_summary_chunks: int = 20
+    max_summary_chunks: int = 12          # lowered from 20 to reduce token usage
     max_output_tokens: int = 1024
     document_ttl_hours: int = 24
     rate_limit_upload: str = "5/hour"
@@ -63,6 +67,11 @@ class Settings(BaseSettings):
     @property
     def max_upload_bytes(self) -> int:
         return self.max_upload_mb * 1024 * 1024
+
+    @property
+    def gemini_fast_model_resolved(self) -> str:
+        """Return the fast/cheap routing model, falling back to the main model."""
+        return self.gemini_fast_model or self.gemini_model
 
 
 def _load() -> Settings:

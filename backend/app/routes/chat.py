@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import uuid
 from typing import Annotated
@@ -9,7 +10,8 @@ from slowapi.util import get_remote_address
 
 from app.config import get_settings
 from app.db import get_conn, get_document, insert_message
-from app.rag import answer_compare, answer_qa, answer_summarize, route_question
+from app.llm import QuotaExceededError
+from app.rag import answer_compare, answer_qa, answer_summarize, embed_question, route_question
 from app.security import sanitize_text
 
 logger = logging.getLogger(__name__)
@@ -45,11 +47,9 @@ class ChatRequest(BaseModel):
         return self
 
 
-from fastapi import Body
-
 @router.post("")
 @limiter.limit(get_settings().rate_limit_chat)
-def chat(
+async def chat(
     request: Request,
     body: ChatRequest,
     session_id: uuid.UUID = Depends(_require_session),
@@ -57,8 +57,12 @@ def chat(
     """
     Run a RAG chat. Stateless: only the current question goes to the model.
     Returns {answer, mode, citations, supported}.
+
+    Routing and question embedding run concurrently — both need only the
+    question text and have no data dependency on each other.
     """
-    question = sanitize_text(body.question, max_chars=get_settings().max_question_chars)
+    settings = get_settings()
+    question = sanitize_text(body.question, max_chars=settings.max_question_chars)
 
     with get_conn() as conn:
         for doc_id in body.document_ids:
@@ -66,15 +70,34 @@ def chat(
             if row is None:
                 raise HTTPException(status_code=404, detail=f"Document {doc_id} not found")
 
-    mode = route_question(question, len(body.document_ids))
+    doc_count = len(body.document_ids)
+
+    # route_question and embed_question share no data dependency:
+    # run them concurrently to overlap the LLM router call with the embed call.
+    route_task = asyncio.to_thread(route_question, question, doc_count)
+    embed_task = asyncio.to_thread(embed_question, question)
+    mode, q_embedding = await asyncio.gather(route_task, embed_task)
+    # q_embedding is tuple[float, ...] (lru_cache compatible); answer functions accept it.
 
     try:
         if mode == "summarize":
-            result = answer_summarize(question, session_id, body.document_ids)
+            # Summarize uses its own fixed retrieval query — q_embedding is not reused.
+            result = await answer_summarize(question, session_id, body.document_ids)
         elif mode == "compare":
-            result = answer_compare(question, session_id, body.document_ids)
+            result = await answer_compare(
+                question, session_id, body.document_ids,
+                precomputed_embedding=q_embedding,
+            )
         else:
-            result = answer_qa(question, session_id, body.document_ids)
+            result = await answer_qa(
+                question, session_id, body.document_ids,
+                precomputed_embedding=q_embedding,
+            )
+    except QuotaExceededError:
+        raise HTTPException(
+            status_code=429,
+            detail="The AI service is busy, please try again in a minute.",
+        )
     except RuntimeError:
         raise HTTPException(status_code=503, detail="AI service temporarily unavailable")
 
