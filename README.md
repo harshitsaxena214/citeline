@@ -239,18 +239,6 @@ Check out the live application here:
 - `python -m pytest`: Runs backend security and unit tests.
 - `python -m evals.run_eval`: Runs RAG evaluation scripts to tune retrieval distance.
 
-## 🤝 Contributing
-Contributions are welcome!
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/amazing-feature`).
-3. Commit your changes (`git commit -m 'Add some amazing feature'`).
-4. Push to the branch (`git push origin feature/amazing-feature`).
-5. Open a Pull Request.
-
-## 📜 License
-
-No license has currently been specified for this repository.
-
 ## 👨‍💻 Author
 
 **Harshit Saxena**
