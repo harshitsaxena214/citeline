@@ -128,6 +128,9 @@ def route_question(question: str, document_count: int) -> str:
             response_schema=_RouterOutput,
             model=settings.gemini_fast_model_resolved,
             max_output_tokens=16,
+            attempts_per_model=1,
+            use_fallbacks=False,
+            timeout=8.0,
         )
         if result is None:
             return "qa"
@@ -157,6 +160,7 @@ def _generate_combined(user_prompt: str) -> _CombinedOutput | None:
         system_instruction=_ANSWER_SYSTEM,
         user_prompt=user_prompt,
         response_schema=_CombinedOutput,
+        timeout=12.0,
     )
 
 

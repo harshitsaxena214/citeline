@@ -72,14 +72,14 @@ async def chat(
 
     doc_count = len(body.document_ids)
 
-    # route_question and embed_question share no data dependency:
-    # run them concurrently to overlap the LLM router call with the embed call.
-    route_task = asyncio.to_thread(route_question, question, doc_count)
-    embed_task = asyncio.to_thread(embed_question, question)
-    mode, q_embedding = await asyncio.gather(route_task, embed_task)
-    # q_embedding is tuple[float, ...] (lru_cache compatible); answer functions accept it.
-
     try:
+        # route_question and embed_question share no data dependency:
+        # run them concurrently to overlap the LLM router call with the embed call.
+        route_task = asyncio.to_thread(route_question, question, doc_count)
+        embed_task = asyncio.to_thread(embed_question, question)
+        mode, q_embedding = await asyncio.gather(route_task, embed_task)
+        # q_embedding is tuple[float, ...] (lru_cache compatible); answer functions accept it.
+
         if mode == "summarize":
             # Summarize uses its own fixed retrieval query — q_embedding is not reused.
             result = await answer_summarize(question, session_id, body.document_ids)
@@ -97,9 +97,15 @@ async def chat(
         raise HTTPException(
             status_code=429,
             detail="The AI service is busy, please try again in a minute.",
+            headers={"Retry-After": "60"},
         )
     except RuntimeError:
-        raise HTTPException(status_code=503, detail="AI service temporarily unavailable")
+        logger.exception("LLM call failed")
+        raise HTTPException(
+            status_code=503,
+            detail="The AI model is busy. Please try again shortly.",
+            headers={"Retry-After": "10"},
+        )
 
     with get_conn() as conn:
         insert_message(
